@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный анализ условий выращивания растений | AI Garden Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js для 3D визуализации -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Заголовок приложения -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-controls">
+                    <button id="themeToggleBtn" class="btn-icon" title="Переключить тему">
+                        <span id="themeIcon">🌙</span>
+                    </button>
+                    <button id="changeModelBtn" class="btn-icon" title="Сменить модель ИИ">
+                        <span>🤖</span>
+                    </button>
+                </div>
+                <h1 class="logo">
+                    <span class="logo-icon">🌱</span>
+                    AI Garden Assistant
+                </h1>
+                <p class="subtitle">Интеллектуальный анализ условий выращивания растений</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Секция выбора растения -->
+            <section class="card section-plant-selection">
+                <h2 class="section-title">1. Выберите растение</h2>
+                <div id="plantCards" class="plant-cards-grid">
+                    <!-- Карточки растений будут добавлены через JavaScript -->
+                </div>
+
+                <!-- Форма добавления нового растения -->
+                <div class="add-plant-section">
+                    <button id="toggleAddPlantBtn" class="btn btn-secondary">
+                        <span>+</span> Добавить новое растение
+                    </button>
+                    <div id="addPlantForm" class="add-plant-form" style="display: none;">
+                        <h3>Добавить новое растение</h3>
+                        <form id="newPlantForm">
+                            <div class="form-row">
+                                <input type="text" id="newPlantName" placeholder="Название растения" required>
+                                <input type="text" id="newPlantIcon" placeholder="Иконка (emoji)" maxlength="2" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Добавить</button>
+                                <button type="button" id="cancelAddPlant" class="btn btn-secondary">Отмена</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция параметров грядки -->
+            <section class="card section-parameters">
+                <h2 class="section-title">2. Введите текущие параметры грядки</h2>
+                <div class="parameters-grid">
+                    <!-- Влажность почвы -->
+                    <div class="parameter-item">
+                        <label for="soilMoisture">
+                            <span class="param-icon">💧</span>
+                            <span class="param-name">Влажность почвы</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="soilMoisture" min="0" max="100" value="50" class="slider">
+                            <div class="slider-value">
+                                <span id="soilMoistureValue">50</span>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Освещенность -->
+                    <div class="parameter-item">
+                        <label for="sunlight">
+                            <span class="param-icon">☀️</span>
+                            <span class="param-name">Освещенность</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="sunlight" min="0" max="24" step="0.5" value="6" class="slider">
+                            <div class="slider-value">
+                                <span id="sunlightValue">6</span> ч/день
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- pH почвы -->
+                    <div class="parameter-item">
+                        <label for="pH">
+                            <span class="param-icon">⚗️</span>
+                            <span class="param-name">pH почвы</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="pH" min="3" max="10" step="0.1" value="6.5" class="slider">
+                            <div class="slider-value">
+                                <span id="pHValue">6.5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Температура воздуха -->
+                    <div class="parameter-item">
+                        <label for="airTemp">
+                            <span class="param-icon">🌡️</span>
+                            <span class="param-name">Температура воздуха</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="airTemp" min="-10" max="40" value="20" class="slider">
+                            <div class="slider-value">
+                                <span id="airTempValue">20</span>°C
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Температура почвы -->
+                    <div class="parameter-item">
+                        <label for="soilTemp">
+                            <span class="param-icon">🌡️</span>
+                            <span class="param-name">Температура почвы</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="soilTemp" min="0" max="35" value="18" class="slider">
+                            <div class="slider-value">
+                                <span id="soilTempValue">18</span>°C
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Азот (N) -->
+                    <div class="parameter-item">
+                        <label for="nitrogen">
+                            <span class="param-icon">🧪</span>
+                            <span class="param-name">Азот (N)</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="nitrogen" min="0" max="200" value="80" class="slider">
+                            <div class="slider-value">
+                                <span id="nitrogenValue">80</span> мг/кг
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Фосфор (P) -->
+                    <div class="parameter-item">
+                        <label for="phosphorus">
+                            <span class="param-icon">🧪</span>
+                            <span class="param-name">Фосфор (P)</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="phosphorus" min="0" max="150" value="60" class="slider">
+                            <div class="slider-value">
+                                <span id="phosphorusValue">60</span> мг/кг
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Калий (K) -->
+                    <div class="parameter-item">
+                        <label for="potassium">
+                            <span class="param-icon">🧪</span>
+                            <span class="param-name">Калий (K)</span>
+                        </label>
+                        <div class="slider-container">
+                            <input type="range" id="potassium" min="0" max="200" value="90" class="slider">
+                            <div class="slider-value">
+                                <span id="potassiumValue">90</span> мг/кг
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка анализа -->
+                <div class="action-section">
+                    <button id="analyzeBtn" class="btn btn-primary btn-large">
+                        <span class="btn-icon">🔍</span>
+                        Анализировать условия с помощью ИИ
+                    </button>
+                </div>
+            </section>
+
+            <!-- Секция результатов анализа -->
+            <section id="resultsSection" class="card section-results" style="display: none;">
+                <h2 class="section-title">3. Результаты ИИ-анализа</h2>
+
+                <!-- Загрузка -->
+                <div id="loadingIndicator" class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Анализируем условия с помощью искусственного интеллекта...</p>
+                </div>
+
+                <!-- Результаты -->
+                <div id="analysisResults" style="display: none;">
+                    <!-- Общая оценка -->
+                    <div class="overall-score">
+                        <h3>Общая оценка условий</h3>
+                        <div class="score-display">
+                            <div class="score-circle" id="scoreCircle">
+                                <span id="scoreValue">0</span>%
+                            </div>
+                            <p id="scoreDescription">Отличные условия</p>
+                        </div>
+                    </div>
+
+                    <!-- Рекомендации -->
+                    <div class="recommendations">
+                        <h3>🎯 Рекомендации по улучшению</h3>
+                        <div id="recommendationsList" class="recommendations-list"></div>
+                    </div>
+
+                    <!-- Предупреждения о болезнях -->
+                    <div class="disease-warnings">
+                        <h3>⚠️ Риски заболеваний</h3>
+                        <div id="diseaseWarnings" class="warnings-list"></div>
+                    </div>
+
+                    <!-- ИИ советы -->
+                    <div class="ai-insights">
+                        <h3>🤖 ИИ-советы для улучшения роста</h3>
+                        <div id="aiInsights" class="insights-content"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция 3D визуализации -->
+            <section id="visualizationSection" class="card section-visualization" style="display: none;">
+                <h2 class="section-title">4. 3D Визуализация роста растения</h2>
+
+                <!-- 3D сцена для текущих параметров -->
+                <div class="visualization-3d-container">
+                    <div class="visualization-header">
+                        <h3>🌿 Состояние растения при ваших параметрах</h3>
+                        <div class="growth-info">
+                            <p class="health-indicator">
+                                Здоровье: <span id="plantHealthPercent">0</span>%
+                            </p>
+                            <p class="day-indicator">
+                                День: <span id="currentDayDisplay">0</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="plant3DScene" class="plant-3d-scene"></div>
+
+                    <!-- Режим автоанимации (по умолчанию) -->
+                    <div id="autoModeInfo" class="visualization-info">
+                        <p>💡 Автоматическая анимация роста растения</p>
+                        <p>🖱️ Кликните мышью для ручного управления</p>
+                        <p>🔍 Колесико мыши для масштабирования</p>
+                    </div>
+
+                    <!-- Ручной режим (показывается после взаимодействия) -->
+                    <div id="manualModeControls" class="manual-mode-controls" style="display: none;">
+                        <div class="timeline-controls">
+                            <label for="timelineSlider">Этап роста:</label>
+                            <div class="timeline-slider-container">
+                                <input type="range" id="timelineSlider" min="0" max="90" value="0" class="slider timeline-slider">
+                                <div class="timeline-labels">
+                                    <span>0 дней</span>
+                                    <span id="midDayLabel">45 дней</span>
+                                    <span id="maxDayLabel">90 дней</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="visualization-actions">
+                            <button id="restartAnimationBtn" class="btn btn-primary">
+                                <span>▶️</span> Запустить анимацию снова
+                            </button>
+                        </div>
+                        <div class="visualization-info">
+                            <p>🖱️ Используйте мышь для вращения модели</p>
+                            <p>🎚️ Переместите слайдер для просмотра роста</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Экспорт рекомендаций -->
+            <!--
+            <section id="exportSection" class="export-section" style="display: none;">
+                <button id="exportBtn" class="btn btn-secondary">
+                    <span>📄</span> Экспорт рекомендаций в PDF
+                </button>
+                <button id="saveHistoryBtn" class="btn btn-secondary">
+                    <span>💾</span> Сохранить в историю
+                </button>
+            </section>
+            -->
+
+            <!-- История анализов -->
+            <section id="historySection" class="card section-history" style="display: none;">
+                <h2 class="section-title">История анализов</h2>
+                <div id="historyList" class="history-list"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>Создано в МАОУ СОШ №6</p>
+        </div>
+    </footer>
+
+    <!-- Модальное окно для выбора и настройки ИИ модели -->
+    <div id="apiKeyModal" class="modal">
+        <div class="modal-content">
+            <h2>Выбор ИИ модели</h2>
+            <p>Выберите модель для анализа условий выращивания</p>
+
+            <form id="modelSelectionForm">
+                <!-- Выбор модели -->
+                <div class="model-selection">
+                    <label for="modelSelect">Выберите модель:</label>
+                    <select id="modelSelect" class="model-select">
+                        <option value="local">🏠 Локальный анализ (без API ключа)</option>
+                        <option value="huggingface">🤗 Hugging Face Mistral (бесплатно, доступно везде)</option>
+                        <option value="cohere">🧠 Cohere Command (бесплатно, доступно везде)</option>
+                        <option value="gemini">🔵 Google Gemini (может быть недоступен)</option>
+                    </select>
+                </div>
+
+                <!-- Информация о модели -->
+                <div id="modelInfo" class="model-info">
+                    <p id="modelDescription"></p>
+                </div>
+
+                <!-- Поле для API ключа -->
+                <div id="apiKeySection" style="display: none;">
+                    <label for="apiKeyInput">API Ключ:</label>
+                    <input type="text" id="apiKeyInput" placeholder="Вставьте ваш API ключ">
+
+                    <div id="apiKeyLinks" class="api-key-links">
+                        <!-- Ссылки будут добавляться динамически -->
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <button type="button" id="closeModalBtn" class="btn btn-secondary">Закрыть</button>
+                </div>
+            </form>
+
+            <p class="note">💡 Рекомендуем Hugging Face или Cohere для стабильной работы</p>
+            <p class="note">🔒 Все данные сохраняются локально в вашем браузере</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="config.js"></script>
+    <script src="plants-database.js"></script>
+    <script src="ai-model.js"></script>
+    <!-- OrbitControls для Three.js -->
+    <script>
+        // Простая реализация OrbitControls для Three.js
+        THREE.OrbitControls = function(camera, domElement) {
+            const self = this;
+            this.camera = camera;
+            this.domElement = domElement;
+
+            this.enableDamping = true;
+            this.dampingFactor = 0.05;
+            this.minDistance = 5;
+            this.maxDistance = 20;
+
+            // Колбэк для уведомления о начале взаимодействия
+            this.onInteractionStart = null;
+            this.onInteractionEnd = null;
+
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            let targetRotation = { x: 0, y: 0 };
+            let currentRotation = { x: 0, y: 0 };
+            let radius = Math.sqrt(
+                camera.position.x * camera.position.x +
+                camera.position.y * camera.position.y +
+                camera.position.z * camera.position.z
+            );
+
+            this.domElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+
+                // Уведомляем о начале взаимодействия
+                if (self.onInteractionStart) {
+                    self.onInteractionStart();
+                }
+            });
+
+            this.domElement.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+
+                    targetRotation.y += deltaX * 0.005;
+                    targetRotation.x += deltaY * 0.005;
+                    targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRotation.x));
+
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            this.domElement.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            this.domElement.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            this.domElement.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY * 0.01;
+                radius = Math.max(self.minDistance, Math.min(self.maxDistance, radius + delta));
+
+                // Уведомляем о начале взаимодействия
+                if (self.onInteractionStart) {
+                    self.onInteractionStart();
+                }
+            });
+
+            this.update = () => {
+                if (this.enableDamping) {
+                    currentRotation.x += (targetRotation.x - currentRotation.x) * this.dampingFactor;
+                    currentRotation.y += (targetRotation.y - currentRotation.y) * this.dampingFactor;
+                } else {
+                    currentRotation.x = targetRotation.x;
+                    currentRotation.y = targetRotation.y;
+                }
+
+                camera.position.x = radius * Math.sin(currentRotation.y) * Math.cos(currentRotation.x);
+                camera.position.z = radius * Math.cos(currentRotation.y) * Math.cos(currentRotation.x);
+                camera.position.y = radius * Math.sin(currentRotation.x) + 2;
+
+                camera.lookAt(0, 2, 0);
+            };
+
+            this.reset = () => {
+                targetRotation = { x: 0, y: 0 };
+                currentRotation = { x: 0, y: 0 };
+                radius = 11.18;
+                camera.position.set(5, 5, 10);
+                camera.lookAt(0, 2, 0);
+            };
+        };
+    </script>
+    <script src="animation.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
